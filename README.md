@@ -50,9 +50,30 @@ python3.12 main.py --once --max-alerts 1
 RugCheck is treated as a signal, not a guarantee. Always manually verify tokens
 before trading.
 
-## Deployment
+## GitHub Actions + Supabase
 
-For Render, create a Background Worker connected to this repo.
+For a low-cost deployment, use Supabase Postgres for persistence and GitHub
+Actions to run one alert cycle every 15 minutes.
+
+1. Create a Supabase project.
+2. Copy the Postgres connection string. Use the pooler/session connection string
+   if Supabase recommends it for external clients.
+3. In GitHub, open this repo's **Settings > Secrets and variables > Actions**.
+4. Add these repository secrets:
+
+```text
+TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID
+DATABASE_URL
+```
+
+The workflow lives at `.github/workflows/memecoin-alerts.yml`. It also supports
+manual runs from the **Actions** tab through `workflow_dispatch`.
+
+## Render Alternative
+
+Render works too, but an always-on worker may cost money. If you use Render,
+create a Background Worker connected to this repo.
 
 Build command:
 
@@ -65,6 +86,3 @@ Start command:
 ```bash
 python main.py
 ```
-
-Create a managed Postgres database and set its internal database URL as
-`DATABASE_URL`. Also set the Telegram and filter variables from `.env.example`.

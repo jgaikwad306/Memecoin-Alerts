@@ -1,0 +1,47 @@
+name: Memecoin Alerts
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: memecoin-alerts
+  cancel-in-progress: true
+
+jobs:
+  run-once:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      POLL_INTERVAL_SECONDS: "60"
+      MIN_RUGCHECK_SCORE: "80"
+      MIN_LIQUIDITY_USD: "5000"
+      MIN_VOLUME_5M_USD: "10000"
+      MAX_PAIR_AGE_MINUTES: "10"
+      MIN_MARKET_CAP_USD: "25000"
+      MAX_MARKET_CAP_USD: "500000"
+      MAX_ALERTS_PER_CYCLE: "5"
+      DEXSCREENER_BASE_URL: "https://api.dexscreener.com"
+      RUGCHECK_BASE_URL: "https://api.rugcheck.xyz"
+      REQUEST_TIMEOUT_SECONDS: "15"
+      HTTP_USER_AGENT: "MemecoinAlertsBot/0.1 (+https://github.com/jgaikwad306/Memecoin-Alerts)"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run alert cycle
+        run: python main.py --once
