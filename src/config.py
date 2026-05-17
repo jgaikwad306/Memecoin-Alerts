@@ -44,10 +44,12 @@ class Settings:
     max_pair_age_minutes: float
     min_market_cap_usd: float
     max_market_cap_usd: float
+    max_alerts_per_cycle: int
     dexscreener_base_url: str
     rugcheck_base_url: str
     sqlite_path: str
     request_timeout_seconds: int
+    http_user_agent: str
 
 
 def load_settings() -> Settings:
@@ -63,6 +65,7 @@ def load_settings() -> Settings:
         max_pair_age_minutes=_get_float("MAX_PAIR_AGE_MINUTES", 10),
         min_market_cap_usd=_get_float("MIN_MARKET_CAP_USD", 25000),
         max_market_cap_usd=_get_float("MAX_MARKET_CAP_USD", 500000),
+        max_alerts_per_cycle=_get_int("MAX_ALERTS_PER_CYCLE", 0),
         dexscreener_base_url=os.getenv(
             "DEXSCREENER_BASE_URL", "https://api.dexscreener.com"
         ).rstrip("/"),
@@ -71,6 +74,10 @@ def load_settings() -> Settings:
         ),
         sqlite_path=os.getenv("SQLITE_PATH", "data/bot.sqlite3"),
         request_timeout_seconds=_get_int("REQUEST_TIMEOUT_SECONDS", 15),
+        http_user_agent=os.getenv(
+            "HTTP_USER_AGENT",
+            "MemecoinAlertsBot/0.1 (+https://github.com/jgaikwad306/Memecoin-Alerts)",
+        ),
     )
 
 

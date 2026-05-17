@@ -25,6 +25,14 @@ python3.12 main.py
 
 The SQLite database is created at `data/bot.sqlite3` by default.
 
+Useful one-off commands:
+
+```bash
+python3.12 main.py --test-telegram
+python3.12 main.py --once
+python3.12 main.py --once --max-alerts 1
+```
+
 ## How It Works
 
 1. Fetch latest Solana token profiles and boosted tokens from DexScreener.

@@ -14,10 +14,14 @@ def _request_json(
     method: str,
     url: str,
     timeout: int,
+    user_agent: str,
     payload: dict[str, Any] | None = None,
 ) -> Any:
     data = None
-    headers = {"Accept": "application/json"}
+    headers = {
+        "Accept": "application/json",
+        "User-Agent": user_agent,
+    }
     if payload is not None:
         data = json.dumps(payload).encode("utf-8")
         headers["Content-Type"] = "application/json"
@@ -35,9 +39,9 @@ def _request_json(
     return json.loads(body)
 
 
-def get_json(url: str, timeout: int) -> Any:
-    return _request_json("GET", url, timeout)
+def get_json(url: str, timeout: int, user_agent: str) -> Any:
+    return _request_json("GET", url, timeout, user_agent)
 
 
-def post_json(url: str, timeout: int, payload: dict[str, Any]) -> Any:
-    return _request_json("POST", url, timeout, payload)
+def post_json(url: str, timeout: int, user_agent: str, payload: dict[str, Any]) -> Any:
+    return _request_json("POST", url, timeout, user_agent, payload)

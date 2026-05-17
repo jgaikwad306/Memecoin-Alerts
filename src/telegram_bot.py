@@ -37,13 +37,25 @@ def build_alert_message(pair: TokenPair, report: RugCheckReport) -> str:
 
 
 def send_telegram_alert(settings: Settings, pair: TokenPair, report: RugCheckReport) -> None:
+    send_telegram_message(settings, build_alert_message(pair, report), parse_mode="HTML")
+
+
+def send_telegram_message(
+    settings: Settings,
+    text: str,
+    parse_mode: str | None = None,
+) -> None:
+    payload = {
+        "chat_id": settings.telegram_chat_id,
+        "text": text,
+        "disable_web_page_preview": True,
+    }
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
+
     post_json(
         f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage",
         timeout=settings.request_timeout_seconds,
-        payload={
-            "chat_id": settings.telegram_chat_id,
-            "text": build_alert_message(pair, report),
-            "parse_mode": "HTML",
-            "disable_web_page_preview": True,
-        },
+        user_agent=settings.http_user_agent,
+        payload=payload,
     )

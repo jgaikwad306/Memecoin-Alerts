@@ -16,6 +16,7 @@ def _get_json(settings: Settings, path: str) -> Any:
     return get_json(
         f"{settings.dexscreener_base_url}{path}",
         timeout=settings.request_timeout_seconds,
+        user_agent=settings.http_user_agent,
     )
 
 

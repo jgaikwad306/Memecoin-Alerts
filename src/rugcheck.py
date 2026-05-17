@@ -28,6 +28,7 @@ def get_rugcheck_report(settings: Settings, token_address: str) -> RugCheckRepor
     payload = get_json(
         f"{settings.rugcheck_base_url}/v1/tokens/{token_address}/report",
         timeout=settings.request_timeout_seconds,
+        user_agent=settings.http_user_agent,
     )
     if not isinstance(payload, dict):
         payload = {"response": payload}
