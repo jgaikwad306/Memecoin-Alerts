@@ -47,6 +47,7 @@ class Settings:
     max_alerts_per_cycle: int
     dexscreener_base_url: str
     rugcheck_base_url: str
+    database_url: str
     sqlite_path: str
     request_timeout_seconds: int
     http_user_agent: str
@@ -72,6 +73,7 @@ def load_settings() -> Settings:
         rugcheck_base_url=os.getenv("RUGCHECK_BASE_URL", "https://api.rugcheck.xyz").rstrip(
             "/"
         ),
+        database_url=os.getenv("DATABASE_URL", ""),
         sqlite_path=os.getenv("SQLITE_PATH", "data/bot.sqlite3"),
         request_timeout_seconds=_get_int("REQUEST_TIMEOUT_SECONDS", 15),
         http_user_agent=os.getenv(

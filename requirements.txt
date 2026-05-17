@@ -1,1 +1,1 @@
-# No third-party runtime dependencies.
+psycopg[binary]==3.2.3

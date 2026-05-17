@@ -36,7 +36,7 @@ def run_once(max_alerts: int | None = None) -> int:
     skipped_basic = 0
     skipped_rugcheck = 0
     rugcheck_count = 0
-    with connect(settings.sqlite_path) as conn:
+    with connect(settings.database_url, settings.sqlite_path) as conn:
         init_db(conn)
         pairs = get_candidate_solana_pairs(settings)
         LOGGER.info("Fetched %s candidate Solana pairs", len(pairs))
@@ -114,7 +114,7 @@ def main() -> None:
             LOGGER.info("Sent Telegram test message")
             return
 
-        with connect(settings.sqlite_path) as conn:
+        with connect(settings.database_url, settings.sqlite_path) as conn:
             init_db(conn)
 
         if args.once:

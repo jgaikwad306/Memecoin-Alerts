@@ -2,7 +2,7 @@
 
 Python MVP that polls DexScreener for recent Solana token profiles and boosts,
 filters noisy pairs, checks RugCheck, sends Telegram alerts, and logs seen tokens
-to SQLite.
+to SQLite locally or Postgres in production.
 
 The bot is alert-only. It does not buy, sell, sign transactions, store private
 keys, or execute trades.
@@ -15,7 +15,11 @@ cp .env.example .env
 
 Edit `.env` with your Telegram bot token and chat ID.
 
-This MVP uses only the Python standard library. Use Python 3.11 or newer.
+Use Python 3.11 or newer. Install dependencies when deploying with Postgres:
+
+```bash
+pip install -r requirements.txt
+```
 
 ## Run
 
@@ -23,7 +27,8 @@ This MVP uses only the Python standard library. Use Python 3.11 or newer.
 python3.12 main.py
 ```
 
-The SQLite database is created at `data/bot.sqlite3` by default.
+The SQLite database is created at `data/bot.sqlite3` by default. Set
+`DATABASE_URL` to use Postgres instead.
 
 Useful one-off commands:
 
@@ -44,3 +49,22 @@ python3.12 main.py --once --max-alerts 1
 
 RugCheck is treated as a signal, not a guarantee. Always manually verify tokens
 before trading.
+
+## Deployment
+
+For Render, create a Background Worker connected to this repo.
+
+Build command:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start command:
+
+```bash
+python main.py
+```
+
+Create a managed Postgres database and set its internal database URL as
+`DATABASE_URL`. Also set the Telegram and filter variables from `.env.example`.

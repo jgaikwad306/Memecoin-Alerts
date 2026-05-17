@@ -1,0 +1,43 @@
+services:
+  - type: worker
+    name: memecoin-alerts-worker
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: memecoin-alerts-db
+          property: connectionString
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: POLL_INTERVAL_SECONDS
+        value: "60"
+      - key: MIN_RUGCHECK_SCORE
+        value: "80"
+      - key: MIN_LIQUIDITY_USD
+        value: "5000"
+      - key: MIN_VOLUME_5M_USD
+        value: "10000"
+      - key: MAX_PAIR_AGE_MINUTES
+        value: "10"
+      - key: MIN_MARKET_CAP_USD
+        value: "25000"
+      - key: MAX_MARKET_CAP_USD
+        value: "500000"
+      - key: MAX_ALERTS_PER_CYCLE
+        value: "5"
+      - key: DEXSCREENER_BASE_URL
+        value: https://api.dexscreener.com
+      - key: RUGCHECK_BASE_URL
+        value: https://api.rugcheck.xyz
+      - key: REQUEST_TIMEOUT_SECONDS
+        value: "15"
+      - key: HTTP_USER_AGENT
+        value: MemecoinAlertsBot/0.1 (+https://github.com/jgaikwad306/Memecoin-Alerts)
+
+databases:
+  - name: memecoin-alerts-db
+    plan: free
