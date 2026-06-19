@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import logging
 import time
 
@@ -14,7 +15,7 @@ from .db import (
     update_token_with_rugcheck,
 )
 from .dexscreener import get_candidate_solana_pairs
-from .filters import passes_basic_filters, passes_rugcheck_filter
+from .filters import basic_filter_rejection_reason, passes_rugcheck_filter
 from .rugcheck import get_rugcheck_report
 from .telegram_bot import send_telegram_alert, send_telegram_message
 
@@ -36,6 +37,7 @@ def run_once(max_alerts: int | None = None) -> int:
     skipped_basic = 0
     skipped_rugcheck = 0
     rugcheck_count = 0
+    basic_rejection_reasons: Counter[str] = Counter()
     with connect(settings.database_url, settings.sqlite_path) as conn:
         init_db(conn)
         pairs = get_candidate_solana_pairs(settings)
@@ -52,8 +54,10 @@ def run_once(max_alerts: int | None = None) -> int:
 
             save_seen_token(conn, pair)
 
-            if not passes_basic_filters(pair, settings):
+            rejection_reason = basic_filter_rejection_reason(pair, settings)
+            if rejection_reason is not None:
                 skipped_basic += 1
+                basic_rejection_reasons[rejection_reason] += 1
                 continue
 
             report = get_rugcheck_report(settings, pair.token_address)
@@ -78,6 +82,11 @@ def run_once(max_alerts: int | None = None) -> int:
             skipped_rugcheck,
             alerted_count,
         )
+        if basic_rejection_reasons:
+            LOGGER.info(
+                "Basic filter rejection reasons: %s",
+                dict(sorted(basic_rejection_reasons.items())),
+            )
 
     return alerted_count
 
